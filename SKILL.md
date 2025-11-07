@@ -1,0 +1,116 @@
+---
+name: use-mcp-tools
+description: Discover and use MCP tools from the progressive discovery system at ~/.mcp-servers/. Learn what's available through filesystem exploration without loading all tools into context.
+allowed-tools: [Read, Bash, Glob]
+---
+
+# Use MCP Tools
+
+Discover and use MCP tools progressively from `~/.mcp-servers/` without loading all tool definitions into context.
+
+## When to Use This Skill
+
+Use this skill when:
+- User asks "What can you do?" or about available MCP capabilities
+- User mentions wanting to use MCP tools or features
+- You need to explore what MCP servers and tools are available
+- User mentions any MCP server name (Coretx, Figma, Postman, Context7, Chrome DevTools, etc.)
+- User asks about specific capabilities without knowing which tool provides them
+
+## Quick Start Workflow
+
+**CRITICAL**: Never assume which servers or tools exist. Always discover dynamically.
+
+1. **Check if system exists**: `ls ~/.mcp-servers/`
+   - If missing, use the `progressive-mcp-discovery` skill to implement it
+
+2. **Read the system README**: `cat ~/.mcp-servers/README.md`
+   - Contains complete documentation on architecture, available servers, and CLI usage
+   - ~1,500 tokens but covers everything you need
+
+3. **Discover available servers**: `cd ~/.mcp-servers && pnpm run discover`
+   - Lists all servers with tool counts without loading definitions
+
+4. **Explore specific tools as needed**:
+   - List server's tools: `pnpm run discover -- list <server>`
+   - Get tool details: `pnpm run discover -- info <server> <tool>`
+   - Read implementation: `cat ~/.mcp-servers/servers/<server>/<tool>.ts`
+   - Check types: `cat ~/.mcp-servers/servers/<server>/types.ts`
+
+## How to Call MCP Tools
+
+Once you've discovered the tools you need, use the generic CLI to call them without writing code:
+
+### Generic Call CLI
+
+```bash
+cd ~/.mcp-servers
+pnpm run call <server> <tool> [params]
+```
+
+**Params can be**:
+- JSON string: `'{"key":"value"}'`
+- File: `@params.json`
+- Stdin: `-` (read from pipe)
+- Omitted: `{}` (empty params)
+
+### Examples
+
+```bash
+# Get a Jira issue
+pnpm run call atlassian getJiraIssue '{"cloudId":"https://site.atlassian.net","issueIdOrKey":"API-86"}'
+
+# Search Jira issues with JQL
+pnpm run call atlassian searchJiraIssuesUsingJql '{"cloudId":"https://site.atlassian.net","jql":"project=API AND status=\"To Do\""}'
+
+# Get AI notes from Coretx
+pnpm run call coretx getAiNotes '{"category":"","tags":"","limit":5,"offset":0}'
+
+# Create issue from JSON file
+pnpm run call atlassian createJiraIssue @create-issue-params.json
+
+# Pipe params from stdin
+echo '{"cloudId":"...","issueIdOrKey":"API-86"}' | pnpm run call atlassian getJiraIssue -
+```
+
+### Programmatic Usage (Advanced)
+
+If you need TypeScript code with type safety, you can import tools directly:
+
+```typescript
+import { initializeServer, closeAllServers } from '~/.mcp-servers/mcp-client.js';
+import { getJiraIssue } from '~/.mcp-servers/servers/atlassian/index.js';
+import serverConfig from '~/.mcp-servers/servers.json' with { type: 'json' };
+
+async function example() {
+  await initializeServer('atlassian', serverConfig.atlassian);
+  const result = await getJiraIssue({
+    cloudId: 'https://site.atlassian.net',
+    issueIdOrKey: 'API-86'
+  });
+  await closeAllServers();
+}
+```
+
+See `~/.mcp-servers/example.ts` for complete TypeScript examples.
+
+## Key Principles
+
+- **The filesystem is the source of truth** - Don't maintain static lists, explore dynamically
+- **Progressive discovery** - Load only what you need, when you need it
+- **Never import index files** - They load all tools at once (defeats the purpose)
+- **Always start fresh** - Run `pnpm run discover` at the start of each conversation
+
+## Anti-Pattern: Don't Do This
+
+```typescript
+// ✗ WRONG - loads all tool definitions into context
+import * as coretx from '~/.mcp-servers/servers/coretx/index.ts';
+import * as context7 from '~/.mcp-servers/servers/context7/index.ts';
+```
+
+## References
+
+- **[~/.mcp-servers/README.md](~/.mcp-servers/README.md)**: Complete system documentation (source of truth)
+- **[references/usage-patterns.md](references/usage-patterns.md)**: Common patterns and best practices
+- **[examples/discovery-examples.md](examples/discovery-examples.md)**: Concrete usage examples
