@@ -19,7 +19,7 @@ This mimics how developers work with libraries:
 #### Step 1.1: Verify System Exists
 
 ```bash
-ls ~/.mcp-servers/
+ls ~/.mcp-catalogue/
 ```
 
 **Expected output:**
@@ -44,7 +44,7 @@ types.ts
 #### Step 1.2: List Available Servers
 
 ```bash
-cd ~/.mcp-servers && pnpm run discover
+cd ~/.mcp-catalogue && pnpm run discover
 ```
 
 **Expected output:**
@@ -68,7 +68,7 @@ Usage: npm run discover -- list <server-name>
 #### Step 2.1: List Tools in a Server
 
 ```bash
-cd ~/.mcp-servers && pnpm run discover -- list coretx
+cd ~/.mcp-catalogue && pnpm run discover -- list coretx
 ```
 
 **Expected output:**
@@ -99,16 +99,16 @@ Tools in coretx:
 #### Step 2.2: Alternative - Filesystem Listing
 
 ```bash
-ls ~/.mcp-servers/servers/coretx/*.ts | grep -v "index.ts" | grep -v "types.ts"
+ls ~/.mcp-catalogue/servers/coretx/*.ts | grep -v "index.ts" | grep -v "types.ts"
 ```
 
 **Output:**
 ```
-~/.mcp-servers/servers/coretx/create-ai-note.ts
-~/.mcp-servers/servers/coretx/create-session.ts
-~/.mcp-servers/servers/coretx/get-active-session.ts
-~/.mcp-servers/servers/coretx/get-ai-notes.ts
-~/.mcp-servers/servers/coretx/session-add-entry.ts
+~/.mcp-catalogue/servers/coretx/create-ai-note.ts
+~/.mcp-catalogue/servers/coretx/create-session.ts
+~/.mcp-catalogue/servers/coretx/get-active-session.ts
+~/.mcp-catalogue/servers/coretx/get-ai-notes.ts
+~/.mcp-catalogue/servers/coretx/session-add-entry.ts
 ```
 
 **When to use**: When you want raw filenames without running the CLI.
@@ -120,7 +120,7 @@ ls ~/.mcp-servers/servers/coretx/*.ts | grep -v "index.ts" | grep -v "types.ts"
 Only when you need to use a specific tool:
 
 ```bash
-cd ~/.mcp-servers && pnpm run discover -- info coretx create-session
+cd ~/.mcp-catalogue && pnpm run discover -- info coretx create-session
 ```
 
 **Expected output:**
@@ -135,7 +135,7 @@ becomes the active session for subsequent operations.
 Input Type: CreateSessionInput
 See: coretx/types.ts for full type definition
 
-File: /Users/user/.mcp-servers/coretx/create-session.ts
+File: /Users/user/.mcp-catalogue/coretx/create-session.ts
 ```
 
 **Analysis**: You now know:
@@ -148,7 +148,7 @@ File: /Users/user/.mcp-servers/coretx/create-session.ts
 For exact usage and function signature:
 
 ```bash
-cat ~/.mcp-servers/servers/coretx/create-session.ts
+cat ~/.mcp-catalogue/servers/coretx/create-session.ts
 ```
 
 **Output:**
@@ -186,7 +186,7 @@ export async function createSession(
 To see exact parameters:
 
 ```bash
-cat ~/.mcp-servers/servers/coretx/types.ts | grep -A 10 "CreateSessionInput"
+cat ~/.mcp-catalogue/servers/coretx/types.ts | grep -A 10 "CreateSessionInput"
 ```
 
 **Output:**
@@ -209,7 +209,7 @@ export interface CreateSessionResponse {
 #### Step 3.4: Check Related Types (if needed)
 
 ```bash
-cat ~/.mcp-servers/servers/coretx/types.ts | grep -A 10 "interface Session"
+cat ~/.mcp-catalogue/servers/coretx/types.ts | grep -A 10 "interface Session"
 ```
 
 **Output:**
@@ -241,21 +241,21 @@ Based on what you've learned, you can now:
 
 #### Step 1: Check if sessions are supported
 ```bash
-cd ~/.mcp-servers && pnpm run discover -- list coretx | grep session
+cd ~/.mcp-catalogue && pnpm run discover -- list coretx | grep session
 ```
 
 **Result**: See `create-session`, `get-active-session`, `session-add-entry`
 
 #### Step 2: Get details on create-session
 ```bash
-cd ~/.mcp-servers && pnpm run discover -- info coretx create-session
+cd ~/.mcp-catalogue && pnpm run discover -- info coretx create-session
 ```
 
 **Result**: Learn it creates sessions with optional name and metadata
 
 #### Step 3: Check parameters
 ```bash
-cat ~/.mcp-servers/servers/coretx/types.ts | grep -A 5 "CreateSessionInput"
+cat ~/.mcp-catalogue/servers/coretx/types.ts | grep -A 5 "CreateSessionInput"
 ```
 
 **Result**: See `name?: string` and `metadata?: Record<string, unknown>`
@@ -285,8 +285,8 @@ The new session will become your active session automatically.
 
 ```typescript
 // Loads ALL tool definitions into context
-import * as coretx from '~/.mcp-servers/servers/coretx/index.ts';
-import { CreateSessionInput, CreateSessionResponse, ... } from '~/.mcp-servers/servers/coretx/types.ts';
+import * as coretx from '~/.mcp-catalogue/servers/coretx/index.ts';
+import { CreateSessionInput, CreateSessionResponse, ... } from '~/.mcp-catalogue/servers/coretx/types.ts';
 
 // Thousands of tokens consumed just to answer one question
 ```
@@ -311,7 +311,7 @@ cat types.ts | grep -A 5 "CreateSessionInput"
 ### Read Immediately (Lightweight)
 - Server list: `pnpm run discover`
 - Tool list: `pnpm run discover -- list <server>`
-- Directory contents: `ls ~/.mcp-servers/servers/<server>/`
+- Directory contents: `ls ~/.mcp-catalogue/servers/<server>/`
 
 ### Read On-Demand (When Relevant)
 - Tool details: `pnpm run discover -- info <server> <tool>`

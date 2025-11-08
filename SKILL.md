@@ -1,12 +1,12 @@
 ---
 name: use-mcp-tools
-description: Discover and use MCP tools from the progressive discovery system at ~/.mcp-servers/. Learn what's available through filesystem exploration without loading all tools into context.
+description: Discover and use MCP tools from the progressive discovery system at ~/.mcp-catalogue/. Learn what's available through filesystem exploration without loading all tools into context.
 allowed-tools: [Read, Bash, Glob]
 ---
 
 # Use MCP Tools
 
-Discover and use MCP tools progressively from `~/.mcp-servers/` without loading all tool definitions into context.
+Discover and use MCP tools progressively from `~/.mcp-catalogue/` without loading all tool definitions into context.
 
 ## When to Use This Skill
 
@@ -21,21 +21,21 @@ Use this skill when:
 
 **CRITICAL**: Never assume which servers or tools exist. Always discover dynamically.
 
-1. **Check if system exists**: `ls ~/.mcp-servers/`
+1. **Check if system exists**: `ls ~/.mcp-catalogue/`
    - If missing, use the `progressive-mcp-discovery` skill to implement it
 
-2. **Read the system README**: `cat ~/.mcp-servers/README.md`
+2. **Read the system README**: `cat ~/.mcp-catalogue/README.md`
    - Contains complete documentation on architecture, available servers, and CLI usage
    - ~1,500 tokens but covers everything you need
 
-3. **Discover available servers**: `cd ~/.mcp-servers && pnpm run discover`
+3. **Discover available servers**: `cd ~/.mcp-catalogue && pnpm run discover`
    - Lists all servers with tool counts without loading definitions
 
 4. **Explore specific tools as needed**:
    - List server's tools: `pnpm run discover -- list <server>`
    - Get tool details: `pnpm run discover -- info <server> <tool>`
-   - Read implementation: `cat ~/.mcp-servers/servers/<server>/<tool>.ts`
-   - Check types: `cat ~/.mcp-servers/servers/<server>/types.ts`
+   - Read implementation: `cat ~/.mcp-catalogue/servers/<server>/<tool>.ts`
+   - Check types: `cat ~/.mcp-catalogue/servers/<server>/types.ts`
 
 ## How to Call MCP Tools
 
@@ -44,7 +44,7 @@ Once you've discovered the tools you need, use the generic CLI to call them with
 ### Generic Call CLI
 
 ```bash
-cd ~/.mcp-servers
+cd ~/.mcp-catalogue
 pnpm run call <server> <tool> [params]
 ```
 
@@ -78,9 +78,9 @@ echo '{"cloudId":"...","issueIdOrKey":"API-86"}' | pnpm run call atlassian getJi
 If you need TypeScript code with type safety, you can import tools directly:
 
 ```typescript
-import { initializeServer, closeAllServers } from '~/.mcp-servers/mcp-client.js';
-import { getJiraIssue } from '~/.mcp-servers/servers/atlassian/index.js';
-import serverConfig from '~/.mcp-servers/servers.json' with { type: 'json' };
+import { initializeServer, closeAllServers } from '~/.mcp-catalogue/mcp-client.js';
+import { getJiraIssue } from '~/.mcp-catalogue/servers/atlassian/index.js';
+import serverConfig from '~/.mcp-catalogue/servers.json' with { type: 'json' };
 
 async function example() {
   await initializeServer('atlassian', serverConfig.atlassian);
@@ -92,7 +92,7 @@ async function example() {
 }
 ```
 
-See `~/.mcp-servers/example.ts` for complete TypeScript examples.
+See `~/.mcp-catalogue/example.ts` for complete TypeScript examples.
 
 ## Key Principles
 
@@ -105,12 +105,12 @@ See `~/.mcp-servers/example.ts` for complete TypeScript examples.
 
 ```typescript
 // ✗ WRONG - loads all tool definitions into context
-import * as coretx from '~/.mcp-servers/servers/coretx/index.ts';
-import * as context7 from '~/.mcp-servers/servers/context7/index.ts';
+import * as coretx from '~/.mcp-catalogue/servers/coretx/index.ts';
+import * as context7 from '~/.mcp-catalogue/servers/context7/index.ts';
 ```
 
 ## References
 
-- **[~/.mcp-servers/README.md](~/.mcp-servers/README.md)**: Complete system documentation (source of truth)
+- **[~/.mcp-catalogue/README.md](~/.mcp-catalogue/README.md)**: Complete system documentation (source of truth)
 - **[references/usage-patterns.md](references/usage-patterns.md)**: Common patterns and best practices
 - **[examples/discovery-examples.md](examples/discovery-examples.md)**: Concrete usage examples

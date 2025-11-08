@@ -12,7 +12,7 @@ Examples of discovering and using MCP tools, regardless of which servers are ava
 
 ```bash
 # Step 1: Check if progressive discovery exists
-ls ~/.mcp-servers/
+ls ~/.mcp-catalogue/
 ```
 
 **Possible outcomes:**
@@ -29,14 +29,14 @@ package.json
 
 **B) Directory doesn't exist:**
 ```
-ls: ~/.mcp-servers/: No such file or directory
+ls: ~/.mcp-catalogue/: No such file or directory
 ```
 → Tell user: "Progressive MCP discovery isn't set up. Would you like me to implement it using the progressive-mcp-discovery skill?"
 
 ### Step 2: Discover available servers
 
 ```bash
-cd ~/.mcp-servers && pnpm run discover
+cd ~/.mcp-catalogue && pnpm run discover
 ```
 
 **Example output:**
@@ -59,10 +59,10 @@ Usage: npm run discover -- list <server-name>
 
 ```bash
 # Explore server-a
-cd ~/.mcp-servers && pnpm run discover -- list server-a
+cd ~/.mcp-catalogue && pnpm run discover -- list server-a
 
 # Explore server-b
-cd ~/.mcp-servers && pnpm run discover -- list server-b
+cd ~/.mcp-catalogue && pnpm run discover -- list server-b
 ```
 
 **Now you know**:
@@ -76,7 +76,7 @@ cd ~/.mcp-servers && pnpm run discover -- list server-b
 
 ```bash
 # Step 1: List servers
-cd ~/.mcp-servers && pnpm run discover
+cd ~/.mcp-catalogue && pnpm run discover
 ```
 
 **Response to user:**
@@ -84,9 +84,9 @@ cd ~/.mcp-servers && pnpm run discover
 
 ```bash
 # Step 2: List tools in each active server
-for server in $(cd ~/.mcp-servers && pnpm run discover 2>/dev/null | grep '(' | awk '{print $1}'); do
+for server in $(cd ~/.mcp-catalogue && pnpm run discover 2>/dev/null | grep '(' | awk '{print $1}'); do
   echo "=== $server ==="
-  cd ~/.mcp-servers && pnpm run discover -- list $server
+  cd ~/.mcp-catalogue && pnpm run discover -- list $server
 done
 ```
 
@@ -112,8 +112,8 @@ Would you like more details on any of these?"
 
 ```bash
 # Step 1: Search for relevant tools
-cd ~/.mcp-servers && pnpm run discover -- list server-a | grep -i "doc\|librar\|search"
-cd ~/.mcp-servers && pnpm run discover -- list server-b | grep -i "doc\|librar\|search"
+cd ~/.mcp-catalogue && pnpm run discover -- list server-a | grep -i "doc\|librar\|search"
+cd ~/.mcp-catalogue && pnpm run discover -- list server-b | grep -i "doc\|librar\|search"
 ```
 
 **Possible outcomes:**
@@ -139,8 +139,8 @@ get-library-docs
 ### Step 2: If found, get details
 
 ```bash
-cd ~/.mcp-servers && pnpm run discover -- info server-b resolve-library-id
-cd ~/.mcp-servers && pnpm run discover -- info server-b get-library-docs
+cd ~/.mcp-catalogue && pnpm run discover -- info server-b resolve-library-id
+cd ~/.mcp-catalogue && pnpm run discover -- info server-b get-library-docs
 ```
 
 ### Step 3: Explain workflow
@@ -156,7 +156,7 @@ Would you like me to proceed?"
 
 ```bash
 # Step 1: Get tool info
-cd ~/.mcp-servers && pnpm run discover -- info server-a create-thing
+cd ~/.mcp-catalogue && pnpm run discover -- info server-a create-thing
 
 # Output shows input type name:
 # Input Type: CreateThingInput
@@ -165,7 +165,7 @@ cd ~/.mcp-servers && pnpm run discover -- info server-a create-thing
 ### Step 2: Look up the type definition
 
 ```bash
-cat ~/.mcp-servers/server-a/types.ts | grep -A 10 "CreateThingInput"
+cat ~/.mcp-catalogue/server-a/types.ts | grep -A 10 "CreateThingInput"
 ```
 
 **Output:**
@@ -192,7 +192,7 @@ Would you like me to create a thing? I'll need a name at minimum."
 
 ```bash
 # Step 1: List its tools
-cd ~/.mcp-servers && pnpm run discover -- list unknown-server
+cd ~/.mcp-catalogue && pnpm run discover -- list unknown-server
 ```
 
 **Output:**
@@ -212,13 +212,13 @@ Tools in unknown-server:
 ### Step 2: Get details on interesting tools
 
 ```bash
-cd ~/.mcp-servers && pnpm run discover -- info unknown-server alpha-tool
+cd ~/.mcp-catalogue && pnpm run discover -- info unknown-server alpha-tool
 ```
 
 ### Step 3: Read implementation if needed
 
 ```bash
-cat ~/.mcp-servers/unknown-server/alpha-tool.ts
+cat ~/.mcp-catalogue/unknown-server/alpha-tool.ts
 ```
 
 ### Pattern:
@@ -232,13 +232,13 @@ cat ~/.mcp-servers/unknown-server/alpha-tool.ts
 
 ```bash
 # List all servers (directories)
-ls -d ~/.mcp-servers/*/ | xargs basename
+ls -d ~/.mcp-catalogue/*/ | xargs basename
 
 # List tools in a server (excluding index and types)
-ls ~/.mcp-servers/server-a/*.ts | grep -v "index\|types" | xargs basename -s .ts
+ls ~/.mcp-catalogue/server-a/*.ts | grep -v "index\|types" | xargs basename -s .ts
 
 # Quick count
-ls ~/.mcp-servers/server-a/*.ts | grep -v "index\|types" | wc -l
+ls ~/.mcp-catalogue/server-a/*.ts | grep -v "index\|types" | wc -l
 ```
 
 **Pattern**: Filesystem as the source of truth, not hardcoded knowledge.
@@ -249,7 +249,7 @@ ls ~/.mcp-servers/server-a/*.ts | grep -v "index\|types" | wc -l
 
 ```bash
 # Discover all tools in server
-cd ~/.mcp-servers && pnpm run discover -- list workflow-server
+cd ~/.mcp-catalogue && pnpm run discover -- list workflow-server
 ```
 
 **Output:**
@@ -270,8 +270,8 @@ Tools in workflow-server:
 
 ```bash
 # Check each tool's description and parameters
-cd ~/.mcp-servers && pnpm run discover -- info workflow-server step-one
-cd ~/.mcp-servers && pnpm run discover -- info workflow-server step-two
+cd ~/.mcp-catalogue && pnpm run discover -- info workflow-server step-one
+cd ~/.mcp-catalogue && pnpm run discover -- info workflow-server step-two
 ```
 
 **Explain to user**: "This looks like a 3-step workflow: prepare → process → output. Would you like me to walk through it?"
@@ -282,9 +282,9 @@ cd ~/.mcp-servers && pnpm run discover -- info workflow-server step-two
 
 ```bash
 # Check all servers
-cd ~/.mcp-servers && pnpm run discover
+cd ~/.mcp-catalogue && pnpm run discover
 for server in server-a server-b; do
-  cd ~/.mcp-servers && pnpm run discover -- list $server | grep -i "email\|mail\|send"
+  cd ~/.mcp-catalogue && pnpm run discover -- list $server | grep -i "email\|mail\|send"
 done
 ```
 
@@ -302,14 +302,14 @@ Would any of these help with your task, or would you like to add an email MCP se
 
 ```bash
 # Tool file shows return type
-cat ~/.mcp-servers/server-a/get-complex-data.ts
+cat ~/.mcp-catalogue/server-a/get-complex-data.ts
 # Returns: Promise<MCPToolResponse<ComplexDataResponse>>
 ```
 
 ### Step 2: Look up the response type
 
 ```bash
-cat ~/.mcp-servers/server-a/types.ts | grep -A 20 "ComplexDataResponse"
+cat ~/.mcp-catalogue/server-a/types.ts | grep -A 20 "ComplexDataResponse"
 ```
 
 **Output:**
@@ -330,7 +330,7 @@ export interface ComplexDataResponse {
 ### Step 3: Follow nested types
 
 ```bash
-cat ~/.mcp-servers/server-a/types.ts | grep -A 10 "interface DataItem"
+cat ~/.mcp-catalogue/server-a/types.ts | grep -A 10 "interface DataItem"
 ```
 
 **Only do this when**: User asks specific questions about return structure.
@@ -341,13 +341,13 @@ cat ~/.mcp-servers/server-a/types.ts | grep -A 10 "interface DataItem"
 
 **Machine A:**
 ```bash
-cd ~/.mcp-servers && pnpm run discover
+cd ~/.mcp-catalogue && pnpm run discover
 # Shows: coretx, context7, custom-server
 ```
 
 **Machine B:**
 ```bash
-cd ~/.mcp-servers && pnpm run discover
+cd ~/.mcp-catalogue && pnpm run discover
 # Shows: different-server, another-server
 ```
 
@@ -355,8 +355,8 @@ cd ~/.mcp-servers && pnpm run discover
 
 ```bash
 # Generic discovery script works everywhere
-cd ~/.mcp-servers && pnpm run discover
-cd ~/.mcp-servers && pnpm run discover -- list $(first-server-found)
+cd ~/.mcp-catalogue && pnpm run discover
+cd ~/.mcp-catalogue && pnpm run discover -- list $(first-server-found)
 ```
 
 ## Key Takeaways
@@ -390,22 +390,22 @@ Discover related tools and explain multi-step workflows.
 
 ```bash
 # 1. Check system exists
-ls ~/.mcp-servers/ || exit 1
+ls ~/.mcp-catalogue/ || exit 1
 
 # 2. List servers
-cd ~/.mcp-servers && pnpm run discover
+cd ~/.mcp-catalogue && pnpm run discover
 
 # 3. For each relevant server:
-cd ~/.mcp-servers && pnpm run discover -- list <server>
+cd ~/.mcp-catalogue && pnpm run discover -- list <server>
 
 # 4. For specific tools:
-cd ~/.mcp-servers && pnpm run discover -- info <server> <tool>
+cd ~/.mcp-catalogue && pnpm run discover -- info <server> <tool>
 
 # 5. Read implementation if using:
-cat ~/.mcp-servers/servers/<server>/<tool>.ts
+cat ~/.mcp-catalogue/servers/<server>/<tool>.ts
 
 # 6. Check types if needed:
-cat ~/.mcp-servers/servers/<server>/types.ts | grep -A N "<Type>"
+cat ~/.mcp-catalogue/servers/<server>/types.ts | grep -A N "<Type>"
 ```
 
 This template works for **any** progressive MCP discovery system, regardless of which servers are installed.

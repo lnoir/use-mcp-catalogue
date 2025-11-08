@@ -1,14 +1,14 @@
 # MCP Tool Usage Patterns
 
-Common patterns and best practices for using MCP tools from `~/.mcp-servers/`.
+Common patterns and best practices for using MCP tools from `~/.mcp-catalogue/`.
 
 ## Pattern 1: Progressive Discovery
 
 ### Anti-Pattern ❌
 ```typescript
 // Loading everything upfront
-import * as coretx from '~/.mcp-servers/servers/coretx/index.ts';
-import * as context7 from '~/.mcp-servers/servers/context7/index.ts';
+import * as coretx from '~/.mcp-catalogue/servers/coretx/index.ts';
+import * as context7 from '~/.mcp-catalogue/servers/context7/index.ts';
 
 // Thousands of tokens consumed before even knowing what user wants
 ```
@@ -17,16 +17,16 @@ import * as context7 from '~/.mcp-servers/servers/context7/index.ts';
 ```bash
 # 1. User asks about capability
 # 2. Check what's available
-cd ~/.mcp-servers && pnpm run discover
+cd ~/.mcp-catalogue && pnpm run discover
 
 # 3. Explore relevant server
-cd ~/.mcp-servers && pnpm run discover -- list coretx
+cd ~/.mcp-catalogue && pnpm run discover -- list coretx
 
 # 4. Get specific tool info
-cd ~/.mcp-servers && pnpm run discover -- info coretx create-session
+cd ~/.mcp-catalogue && pnpm run discover -- info coretx create-session
 
 # 5. Read tool file only if using it
-cat ~/.mcp-servers/servers/coretx/create-session.ts
+cat ~/.mcp-catalogue/servers/coretx/create-session.ts
 
 # Minimal tokens used, maximum flexibility
 ```
@@ -65,7 +65,7 @@ Many tools have optional parameters. Check types to see what's available.
 
 ```bash
 # Check parameters
-cat ~/.mcp-servers/servers/coretx/types.ts | grep -A 5 "CreateSessionInput"
+cat ~/.mcp-catalogue/servers/coretx/types.ts | grep -A 5 "CreateSessionInput"
 
 # Output shows:
 # name?: string
@@ -85,15 +85,15 @@ When you need to understand complex types:
 
 ```bash
 # 1. Find the type name from tool file
-cat ~/.mcp-servers/servers/coretx/get-active-session.ts
+cat ~/.mcp-catalogue/servers/coretx/get-active-session.ts
 # Shows: GetActiveSessionResponse
 
 # 2. Look up the type
-cat ~/.mcp-servers/servers/coretx/types.ts | grep -A 20 "GetActiveSessionResponse"
+cat ~/.mcp-catalogue/servers/coretx/types.ts | grep -A 20 "GetActiveSessionResponse"
 # Shows: { session: Session | null }
 
 # 3. Follow nested types
-cat ~/.mcp-servers/servers/coretx/types.ts | grep -A 15 "interface Session"
+cat ~/.mcp-catalogue/servers/coretx/types.ts | grep -A 15 "interface Session"
 # Shows: Full Session structure
 ```
 
@@ -133,7 +133,7 @@ Tools may fail for various reasons. Common scenarios:
 ### Scenario 1: Server not running
 ```bash
 # Check if server is configured
-cat ~/.mcp-servers/servers.json | grep -A 5 "coretx"
+cat ~/.mcp-catalogue/servers.json | grep -A 5 "coretx"
 ```
 
 If server needs to be running locally and isn't:
@@ -144,7 +144,7 @@ If server needs to be running locally and isn't:
 ### Scenario 2: Invalid parameters
 ```bash
 # Always check required vs optional parameters
-cat ~/.mcp-servers/servers/<server>/types.ts | grep -A 10 "<InputType>"
+cat ~/.mcp-catalogue/servers/<server>/types.ts | grep -A 10 "<InputType>"
 ```
 
 Before calling a tool:
@@ -155,7 +155,7 @@ Before calling a tool:
 ### Scenario 3: Tool doesn't exist
 ```bash
 # Verify tool exists
-ls ~/.mcp-servers/servers/<server>/<tool>.ts
+ls ~/.mcp-catalogue/servers/<server>/<tool>.ts
 ```
 
 If tool not found:
@@ -169,14 +169,14 @@ When user asks "what can you do?":
 
 ```bash
 # 1. Quick overview
-cd ~/.mcp-servers && pnpm run discover
+cd ~/.mcp-catalogue && pnpm run discover
 
 # 2. For each server, give high-level summary:
 # "Coretx (5 tools): Session management and note-taking"
 # "Context7 (2 tools): Library documentation lookup"
 
 # 3. If user interested in specific server:
-cd ~/.mcp-servers && pnpm run discover -- list coretx
+cd ~/.mcp-catalogue && pnpm run discover -- list coretx
 
 # 4. Explain each tool's purpose without loading implementation
 ```
@@ -190,13 +190,13 @@ Use grep for surgical type extraction:
 
 ```bash
 # Find a specific interface
-cat ~/.mcp-servers/servers/coretx/types.ts | grep -A 10 "CreateSessionInput"
+cat ~/.mcp-catalogue/servers/coretx/types.ts | grep -A 10 "CreateSessionInput"
 
 # Find all interfaces with "Session" in name
-cat ~/.mcp-servers/servers/coretx/types.ts | grep "interface.*Session"
+cat ~/.mcp-catalogue/servers/coretx/types.ts | grep "interface.*Session"
 
 # Find an interface and its dependencies
-cat ~/.mcp-servers/servers/coretx/types.ts | grep -A 30 "interface Session"
+cat ~/.mcp-catalogue/servers/coretx/types.ts | grep -A 30 "interface Session"
 ```
 
 **Best Practice**: Only grep for the specific types you need, not all types.
@@ -219,8 +219,8 @@ pnpm run discover -- list context7
 #  then fetch documentation focused on hooks"
 
 # Step 4: Check tool parameters (first time only)
-cat ~/.mcp-servers/servers/context7/types.ts | grep -A 5 "ResolveLibraryIdInput"
-cat ~/.mcp-servers/servers/context7/types.ts | grep -A 5 "GetLibraryDocsInput"
+cat ~/.mcp-catalogue/servers/context7/types.ts | grep -A 5 "ResolveLibraryIdInput"
+cat ~/.mcp-catalogue/servers/context7/types.ts | grep -A 5 "GetLibraryDocsInput"
 
 # Step 5: Explain what you'll pass
 # "Calling with: { libraryName: 'react' }"
@@ -274,16 +274,16 @@ Quick exploration without CLI:
 
 ```bash
 # See all Coretx tools
-ls ~/.mcp-servers/servers/coretx/*.ts | grep -v "index\|types"
+ls ~/.mcp-catalogue/servers/coretx/*.ts | grep -v "index\|types"
 
 # Count tools
-ls ~/.mcp-servers/servers/coretx/*.ts | grep -v "index\|types" | wc -l
+ls ~/.mcp-catalogue/servers/coretx/*.ts | grep -v "index\|types" | wc -l
 
 # Quick scan of tool names
-ls ~/.mcp-servers/servers/coretx/*.ts | grep -v "index\|types" | xargs basename -s .ts
+ls ~/.mcp-catalogue/servers/coretx/*.ts | grep -v "index\|types" | xargs basename -s .ts
 
 # Find tools matching pattern
-ls ~/.mcp-servers/servers/coretx/*session*.ts
+ls ~/.mcp-catalogue/servers/coretx/*session*.ts
 ```
 
 **When to use**: Quick checks, automation, or when CLI is unavailable.
