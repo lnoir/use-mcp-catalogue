@@ -39,9 +39,11 @@ Use this skill when:
 
 ## How to Call MCP Tools
 
-Once you've discovered the tools you need, use the generic CLI to call them without writing code:
+There are two ways to call MCP tools depending on whether they need persistent state:
 
-### Generic Call CLI
+### 1. One-Off Tool Calls (Stateless)
+
+For most tools that don't need persistent connections:
 
 ```bash
 cd ~/.mcp-catalogue
@@ -54,8 +56,7 @@ pnpm run call <server> <tool> [params]
 - Stdin: `-` (read from pipe)
 - Omitted: `{}` (empty params)
 
-### Examples
-
+**Examples:**
 ```bash
 # Get a Jira issue
 pnpm run call atlassian getJiraIssue '{"cloudId":"https://site.atlassian.net","issueIdOrKey":"API-86"}'
@@ -72,6 +73,41 @@ pnpm run call atlassian createJiraIssue @create-issue-params.json
 # Pipe params from stdin
 echo '{"cloudId":"...","issueIdOrKey":"API-86"}' | pnpm run call atlassian getJiraIssue -
 ```
+
+### 2. Persistent Sessions (Stateful)
+
+For servers that need persistent state (browsers, databases, long-running processes):
+
+```bash
+# Start a session
+pnpm run session -- start <server>
+
+# Call tools on the session (multiple times)
+pnpm run session -- call <server> <tool> '{...}'
+
+# Stop the session when done
+pnpm run session -- stop <server>
+```
+
+**Examples:**
+```bash
+# Start browser session
+pnpm run session -- start chrome-devtools
+
+# Navigate and interact
+pnpm run session -- call chrome-devtools navigate_page '{"url":"https://example.com"}'
+pnpm run session -- call chrome-devtools take_screenshot '{}'
+pnpm run session -- call chrome-devtools click_element '{"selector":"button.submit"}'
+
+# Stop when done
+pnpm run session -- stop chrome-devtools
+```
+
+**When to use sessions:**
+- Browser automation (chrome-devtools)
+- Database connections
+- Any tool that maintains state between calls
+- Long-running processes
 
 ### Programmatic Usage (Advanced)
 
