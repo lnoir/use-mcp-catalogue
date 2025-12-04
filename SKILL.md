@@ -22,7 +22,8 @@ Use this skill when:
 **CRITICAL**: Never assume which servers or tools exist. Always discover dynamically.
 
 1. **Check if system exists**: `ls ~/.mcp-catalogue/`
-   - If missing, use the `progressive-mcp-discovery` skill to implement it
+   - If missing, it can be cloned from from https://github.com/lnoir/mcp-catalogue.git.
+   - Use the [mcp-catalogue-add](https://github.com/lnoir/mcp-catalogue-add.git) skill to add MCP server tools
 
 2. **Read the system README**: `cat ~/.mcp-catalogue/README.md`
    - Contains complete documentation on architecture, available servers, and CLI usage
