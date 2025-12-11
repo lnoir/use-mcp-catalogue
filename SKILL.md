@@ -38,6 +38,26 @@ Use this skill when:
    - Read implementation: `cat ~/.mcp-catalogue/servers/<server>/<tool>.ts`
    - Check types: `cat ~/.mcp-catalogue/servers/<server>/types.ts`
 
+## Tool Naming Convention
+
+**IMPORTANT**: MCP tool names use **camelCase**, not kebab-case.
+
+- File names are kebab-case: `get-jira-issue.ts` (filesystem convention)
+- Function names are camelCase: `getJiraIssue()` (code convention)
+- **Tool names for calling are camelCase**: `getJiraIssue` ✓ (MCP protocol)
+
+When calling tools with `pnpm run call`, always use **camelCase**:
+
+```bash
+# ✓ CORRECT - camelCase
+pnpm run call atlassian getJiraIssue '{"cloudId":"...","issueIdOrKey":"API-86"}'
+
+# ✗ WRONG - kebab-case won't work
+pnpm run call atlassian get-jira-issue '{"cloudId":"...","issueIdOrKey":"API-86"}'
+```
+
+The discovery CLI (`pnpm run discover -- list <server>`) shows kebab-case for display purposes, but convert to camelCase when calling tools.
+
 ## How to Call MCP Tools
 
 There are two ways to call MCP tools depending on whether they need persistent state:
@@ -145,6 +165,39 @@ See `~/.mcp-catalogue/example.ts` for complete TypeScript examples.
 import * as coretx from '~/.mcp-catalogue/servers/coretx/index.ts';
 import * as context7 from '~/.mcp-catalogue/servers/context7/index.ts';
 ```
+
+## Troubleshooting
+
+### "Tool X not found" Error
+
+If you get an error like `Tool get-jira-issue not found`:
+
+1. **Check tool name format**: Convert kebab-case to camelCase
+   - `get-jira-issue` → `getJiraIssue` ✓
+   - `search-jira-issues-using-jql` → `searchJiraIssuesUsingJql` ✓
+
+2. **Verify the tool exists**:
+   ```bash
+   cd ~/.mcp-catalogue && pnpm run discover -- list <server>
+   ```
+
+3. **Read the implementation** to see the exact tool name:
+   ```bash
+   cat ~/.mcp-catalogue/servers/<server>/<tool-file>.ts
+   # Look for: callMCPTool('server', 'actualToolName', input)
+   ```
+
+### Converting kebab-case to camelCase
+
+Quick conversion rules:
+- Remove hyphens
+- Capitalize the letter after each hyphen
+- Keep first letter lowercase
+
+Examples:
+- `get-jira-issue` → `getJiraIssue`
+- `add-comment-to-jira-issue` → `addCommentToJiraIssue`
+- `get-ai-notes` → `getAiNotes`
 
 ## References
 
